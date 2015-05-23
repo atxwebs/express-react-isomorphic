@@ -1,0 +1,12 @@
+@import "includes/variables";
+
+// foundation
+@import "../components/foundation/scss/normalize",
+  "../components/foundation/scss/foundation/components/grid",
+  "../components/foundation/scss/foundation/components/block-grid",
+  "../components/foundation/scss/foundation/components/forms",
+  "../components/foundation/scss/foundation/components/type";
+
+// general
+@import "includes/general",
+  "includes/progressbar";

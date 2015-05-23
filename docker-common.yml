@@ -1,0 +1,6 @@
+web:
+  build: .
+  external_links:
+    - mongodb:mongo
+    - redis
+  restart: always

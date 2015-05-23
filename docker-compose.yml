@@ -1,0 +1,14 @@
+web:
+  extends:
+    file: docker-common.yml
+    service: web
+  environment:
+    - VIRTUAL_HOST=localhost
+    - VIRTUAL_PATH=localhost
+  volumes:
+    - ./client:/usr/src/app/client
+    - ./config:/usr/src/app/config
+    - ./public:/usr/src/app/public
+    - ./server:/usr/src/app/server
+    - ./shared:/usr/src/app/shared
+    - ./package.json:/usr/src/app/package.json

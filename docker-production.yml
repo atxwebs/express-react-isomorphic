@@ -1,0 +1,8 @@
+web:
+  extends:
+    file: docker-common.yml
+    service: web
+  environment:
+    - VIRTUAL_HOST=host.com
+    - VIRTUAL_PATH=host.com
+    - NODE_ENV=production

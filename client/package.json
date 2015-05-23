@@ -1,0 +1,6 @@
+{
+  "main": "client.jsx",
+  "browserify": {
+    "transform": ["reactify"]
+  }
+}

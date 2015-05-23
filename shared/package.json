@@ -1,0 +1,8 @@
+{
+  "browser": {
+    "_server/services/user": "_client/services/user"
+  },
+  "browserify": {
+    "transform": ["reactify"]
+  }
+}
