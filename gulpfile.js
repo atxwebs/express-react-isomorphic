@@ -4,7 +4,6 @@ var gulp = require('gulp'),
   rename = require('gulp-rename'),
   livereload = require('gulp-livereload'),
   plumber = require('gulp-plumber'),
-  argv = require('yargs').argv,
   browserify = require('browserify'),
   source = require('vinyl-source-stream'),
   reactify = require('reactify'),
@@ -49,34 +48,38 @@ gulp.task('browserify', function () {
       fullPaths: false
     });
   
-  bundler = watchify(bundler)
-    .transform(reactify)
+  if(!building) bundler = watchify(bundler)
+  bundler.transform(reactify)
     .transform({global: true}, uglifyify);
 
   var rebundle = function () {
-    return bundler.bundle()
+    var b = bundler.bundle()
       .on('error', function (err) {
         console.log('Bundle Error', err.message);
         this.end();
       })
       .pipe(source('bundle.js'))
-      .pipe(gulp.dest('./public/js'))
-      .on('end', function () {
-        if(building) bundler.close();
-      });
-      if(!building) bundler.pipe(livereload());
+      .pipe(gulp.dest('./public/js'));
+    
+    if(!building) b.pipe(livereload());
+      
+    return b;
   };
+  
   bundler.on('update', function (ids) {
     console.log('Rebundling ' + ids.length + ' bundles');
     rebundle();
   }).on('time', function (time) {
     console.log('Bundler finished in ' + prettyMs(time));
   });
+  
   return rebundle();
 });
 
 gulp.task('watch', function () {
   livereload.listen();
+  
+  // css
   gulp.watch([
     'public/css/*.scss',
     'public/css/includes/*.scss'
@@ -84,16 +87,15 @@ gulp.task('watch', function () {
   gulp.watch([
     'public/css/includes/code/**/*.less'
   ], {interval: 500}, ['less', 'css']);
-  gulp.watch(['./src/routes.jsx'], {interval: 500}, ['restart']);
-  gulp.watch(['**/**.js'], {interval: 500}, function (e) {
-    console.log('change', e.path);
-    exec('docker-compose kill && docker-compose start', function (err, stdout, stderr) {
-      console.log('restarted app');
-      setTimeout(function () {
-        livereload.changed(e.path);
-      }, 5000);
-    });
-  });
+  
+  // server
+  gulp.watch([
+    'server/**/**.js',
+    'server/views/**/**.hbs',
+    'shared/**/**.js',
+    'shared/**/**.jsx',
+    'config/**.js'
+  ], ['restart']);
 });
 
 gulp.task('production', function () {
